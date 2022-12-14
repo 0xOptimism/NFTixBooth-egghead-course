@@ -3,10 +3,12 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "hardhat/console.sol";
 import "./Base64.sol";
 
-contract NFTixBooth is ERC721URIStorage {
+contract NFTixBooth is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private currentId;
 
@@ -25,6 +27,7 @@ contract NFTixBooth is ERC721URIStorage {
     function mint() public payable {
         require(availableTickets > 0, "Not enought Tickets");
         require(msg.value >= mintPrice, "Not Enough ETH");
+        require(saleIsActive, "Tickets are not on sale");
 
         string[3] memory svg;
         svg[
@@ -72,11 +75,11 @@ contract NFTixBooth is ERC721URIStorage {
         return totalTickets;
     }
 
-    function openSale() public {
+    function openSale() public onlyOwner {
         saleIsActive = true;
     }
 
-    function closeSale() public {
+    function closeSale() public onlyOwner {
         saleIsActive = false;
     }
 }
