@@ -13,6 +13,7 @@ contract NFTixBooth is ERC721URIStorage {
     bool public saleIsActive = false;
     uint256 public totalTickets = 10;
     uint256 public availableTickets = 10;
+    uint256 public mintPrice = 80000000000000000;
 
     mapping(address => uint256[]) public holderTokenIDs;
 
@@ -21,8 +22,9 @@ contract NFTixBooth is ERC721URIStorage {
         console.log(currentId.current());
     }
 
-    function mint() public {
+    function mint() public payable {
         require(availableTickets > 0, "Not enought Tickets");
+        require(msg.value >= mintPrice, "Not Enough ETH");
 
         string[3] memory svg;
         svg[
